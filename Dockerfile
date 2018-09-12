@@ -17,12 +17,19 @@ RUN apt-get update && apt-get install -y \
   wget
 
 COPY install.sh .
-RUN ./install.sh
+RUN chmod +x install.sh
+RUN dos2unix install.sh
+RUN /bin/sh ./install.sh
 
 COPY ./remote-execute.sh /darknet/
 RUN chmod +x /darknet/remote-execute.sh
+RUN dos2unix /darknet/remote-execute.sh
 COPY ./darknet-listener.sh .
+RUN chmod +x ./darknet-listener.sh
+RUN dos2unix ./darknet-listener.sh
 COPY ./local-filewatch.sh .
+RUN chmod +x ./local-filewatch.sh
+RUN dos2unix ./local-filewatch.sh
 
 CMD ./darknet-listener.sh
 #CMD ./local-filewatch.sh
