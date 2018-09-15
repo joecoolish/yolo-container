@@ -11,33 +11,32 @@ dos2unix $CFG/yolov3.cfg
 
 while true
 do
-    line="ERROR"
-
+    line="TEMP"
     printf "Ready to read file\n"
 
-    netcat -l -p 12345 | while read inside
+    while read inside
     do
         printf "inside: $inside\n"
         line=$inside
-
-        if [ -f "$line" ]
-        then
-            fileName=$(basename "$line")
-            echo "Processing file: $line"
-            echo "$PROCESSED/$fileName.png"
-            ./darknet detect $CFG/yolov3.cfg yolov3.weights "$line"
-
-            if [ -f /darknet/predictions.png ]
-            then    
-                mv -f /darknet/predictions.png "$PROCESSED/$fileName.png"
-            fi
-        fi
-
         printf "End the loop: $process\n"
 
         pkill netcat
-    done
+    done < <(netcat -l -p 12345)
 
+    printf "outside: $line\n"
+
+    if [ -f "$line" ]
+    then
+        fileName=$(basename "$line")
+        echo "Processing file: $line"
+        echo "$PROCESSED/$fileName.png"
+        ./darknet detect $CFG/yolov3.cfg yolov3.weights "$line"
+
+        if [ -f /darknet/predictions.png ]
+        then    
+            mv -f /darknet/predictions.png "$PROCESSED/$fileName.png"
+        fi
+    fi
 
     # netcat -l -p 12345 | read LINE
     # if [ -f "$LINE" ]

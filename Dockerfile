@@ -9,6 +9,7 @@ WORKDIR /
 
 RUN apt-get update && apt-get install -y \
   dos2unix \
+  g++ \
   gcc \
   git \
   make \
