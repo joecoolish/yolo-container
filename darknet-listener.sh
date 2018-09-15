@@ -6,25 +6,26 @@ CFG=/darknet/cfg
 cd "/darknet/"
 printf "Listening on port: 12345\n"
 
-dos2unix /darknet/cfg/coco.data
-dos2unix /darknet/cfg/yolov3.cfg
+dos2unix $CFG/coco.data
+dos2unix $CFG/yolov3.cfg
 
 while true
 do
-    printf "Ready to read file\n"
-    process=true
+    line="ERROR"
 
-    netcat -l -p 12345 | while $process
+    printf "Ready to read file\n"
+
+    netcat -l -p 12345 | while read inside
     do
-        process=false
-        read line
-        printf "line: $line\n"
+        printf "inside: $inside\n"
+        line=$inside
+
         if [ -f "$line" ]
         then
-            fileName=$(basename $line)
+            fileName=$(basename "$line")
             echo "Processing file: $line"
             echo "$PROCESSED/$fileName.png"
-            ./darknet detect cfg/yolov3.cfg yolov3.weights "$line"
+            ./darknet detect $CFG/yolov3.cfg yolov3.weights "$line"
 
             if [ -f /darknet/predictions.png ]
             then    
@@ -33,7 +34,11 @@ do
         fi
 
         printf "End the loop: $process\n"
+
+        pkill netcat
     done
+
+
     # netcat -l -p 12345 | read LINE
     # if [ -f "$LINE" ]
     # then
