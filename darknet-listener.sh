@@ -8,6 +8,8 @@ printf "Listening on port: 12345\n"
 
 dos2unix $CFG/coco.data
 dos2unix $CFG/yolov3.cfg
+dos2unix $CFG/yolov2.cfg
+dos2unix $CFG/yolov3-tiny.cfg
 
 while true
 do
@@ -29,12 +31,12 @@ do
     then
         fileName=$(basename "$line")
         echo "Processing file: $line"
-        echo "$PROCESSED/$fileName.png"
-        ./darknet detect $CFG/yolov3.cfg yolov3.weights "$line"
+        echo "$PROCESSED/$fileName.jpg"
+        ./darknet detect $CFG/yolov$YOLO_VER.cfg yolov$YOLO_VER.weights "$line"
 
-        if [ -f /darknet/predictions.png ]
+        if [ -f /darknet/predictions.jpg ]
         then    
-            mv -f /darknet/predictions.png "$PROCESSED/$fileName.png"
+            mv -f /darknet/predictions.jpg "$PROCESSED/$fileName.jpg"
         fi
     fi
 
